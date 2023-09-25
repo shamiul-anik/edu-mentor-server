@@ -1,4 +1,4 @@
-<h3>Welcome to Edu Mentor!</h3>
+<h3>Welcome to Edu Mentor Server!</h3>
 
 
 
