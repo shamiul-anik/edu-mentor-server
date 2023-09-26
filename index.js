@@ -32,12 +32,13 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
+    
     // Connect the client to the server	(optional starting in v4.7)
     client.connect();
 
     const paymentCollection = client.db("EduMentor").collection("payments");
 
-    // View Single Profile
+    // Check All Payments
     app.get("/payments", async (req, res) => {
       const result = await paymentCollection.find().toArray(); // Documentation: https://www.mongodb.com/docs/drivers/node/current/usage-examples/findOne/
       res.send(result);
@@ -45,14 +46,10 @@ async function run() {
     
     app.post("/payment/success/:transactionID", async (req, res) => {
       const tranID = req.params.transactionID;
-      // console.log("transactionID", tranID);
-      
       const result = await paymentCollection.updateOne(
         { transactionID: tranID }, // Filter condition
         { $set: { payment_status: true } } // Update operation
       );
-
-      // console.log(result);
       if(result.modifiedCount > 0) {
         res.redirect(
           `${process.env.NEXT_PUBLIC_API_URL}/dashboard/student/my-payments/success/${tranID}`
@@ -62,13 +59,11 @@ async function run() {
     
     app.post("/payment/fail/:transactionID", async (req, res) => {
       const tranID = req.params.transactionID;
-      // console.log("transactionID", tranID);
       
       const result = await paymentCollection.deleteOne(
         { transactionID: tranID }, // Filter condition
       );
 
-      // console.log(result);
       if(result.deletedCount) {
         res.redirect(
           `${process.env.NEXT_PUBLIC_API_URL}/dashboard/student/my-payments/fail/${tranID}`
@@ -78,13 +73,11 @@ async function run() {
     
     app.post("/payment/cancel/:transactionID", async (req, res) => {
       const tranID = req.params.transactionID;
-      // console.log("transactionID", tranID);
       
       const result = await paymentCollection.deleteOne(
         { transactionID: tranID }, // Filter condition
       );
 
-      // console.log(result);
       if(result.deletedCount) {
         res.redirect(
           `${process.env.NEXT_PUBLIC_API_URL}/dashboard/student/my-payments/cancel/${tranID}`
@@ -107,11 +100,10 @@ run().catch(console.dir);
 
 
 
-
 app.get("/", (req, res) => {
   res.send("EduMentor is Running!");
 });
 
 app.listen(port, () => {
-  console.log(`EduMentor Server is running on port ${port}`);
+  console.log(`EduMentor Server is Running on Port ${port}`);
 });
